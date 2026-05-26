@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100%" viewBox="0 0 684 1149" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>RustDB UML Class Diagram</title>
+<rect width="684" height="1149" fill="#fafaf8"/>
+<defs>
+<marker id="ah"  viewBox="0 0 12 10" refX="11" refY="5" markerWidth="8" markerHeight="7" orient="auto"><path d="M1 1L11 5L1 9" fill="none" stroke="#777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="ahp" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="8" markerHeight="7" orient="auto"><path d="M1 1L11 5L1 9" fill="none" stroke="#534AB7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="dia" viewBox="0 0 20 12" refX="2"  refY="6" markerWidth="13" markerHeight="9" orient="auto"><polygon points="10,0 20,6 10,12 0,6" fill="#534AB7"/></marker>
+<marker id="tri" viewBox="0 0 14 14" refX="0"  refY="7" markerWidth="9"  markerHeight="9"  orient="auto"><polygon points="14,7 0,1 0,13" fill="white" stroke="#0F6E56" stroke-width="1.5"/></marker>
+</defs>
+<text x="114" y="18" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#534AB7" opacity="0.7">API / QUERY LAYER</text>
+<text x="342" y="18" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#0F6E56" opacity="0.7">CORE DB ENGINE</text>
+<text x="570" y="18" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.2" fill="#A0600A" opacity="0.7">STORAGE &amp; ML</text>
+<path d="M 258,78 L 238,78 L 218,101 L 198,101" fill="none" stroke="#534AB7" stroke-width="1.2" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<path d="M 342,127 L 342,135 L 342,135 L 342,141" fill="none" stroke="#534AB7" stroke-width="1.2" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<path d="M 426,78 L 448,78 L 448,360 L 426,360" fill="none" stroke="#534AB7" stroke-width="1.2" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<path d="M 426,78 L 458,78 L 458,101 L 486,101" fill="none" stroke="#534AB7" stroke-width="1.2" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<path d="M 426,78 L 463,78 L 463,398 L 486,398" fill="none" stroke="#534AB7" stroke-width="1.2" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<path d="M 258,78 L 236,78 L 236,815 L 654,815" fill="none" stroke="#534AB7" stroke-width="1.2" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<path d="M 114,172 L 114,186" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 114,172 L 126,172 L 126,274 L 114,274" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 114,386 L 114,400" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 198,330 L 228,330 L 228,360 L 258,360" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<text x="243" y="356" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#888">reads</text>
+<path d="M 198,456 L 222,456 L 222,212 L 258,212" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<text x="240" y="208" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#888">txn</text>
+<path d="M 198,456 L 450,456 L 450,249 L 486,249" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 114,512 L 114,522 L 12,522 L 12,759 L 570,759" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<text x="291" y="755" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#888">PREDICT</text>
+<path d="M 426,212 L 468,212 L 468,398 L 486,398" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 570,172 L 570,186" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 570,469 L 570,483" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 570,871 L 570,885" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<path d="M 426,509 L 442,509 L 442,694 L 486,694" fill="none" stroke="#0F6E56" stroke-width="1.2" stroke-dasharray="6,4" marker-end="url(#tri)"/>
+<path d="M 426,657 L 446,657 L 446,706 L 486,694" fill="none" stroke="#0F6E56" stroke-width="1.2" stroke-dasharray="6,4" marker-end="url(#tri)"/>
+<clipPath id="clHttpServer"><rect x="30" y="30" width="168" height="142" rx="7"/></clipPath>
+<rect x="30" y="30" width="168" height="142" rx="7" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<rect x="30" y="30" width="168" height="30" fill="#534AB7" clip-path="url(#clHttpServer)"/>
+<text x="114" y="46" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">HttpServer</text>
+<line x1="30" y1="60" x2="198" y2="60" stroke="#534AB7" stroke-width="0.6"/>
+<text x="36" y="74" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">-port: u16</text>
+<text x="36" y="89" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">-router: axum::Router</text>
+<line x1="30" y1="99" x2="198" y2="99" stroke="#534AB7" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="36" y="113" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+serve() Result</text>
+<text x="36" y="128" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+handle_query() Response</text>
+<text x="36" y="143" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+handle_txn_begin() Response</text>
+<text x="36" y="158" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+handle_health() Response</text>
+<clipPath id="clSqlParser"><rect x="30" y="186" width="168" height="74" rx="7"/></clipPath>
+<rect x="30" y="186" width="168" height="74" rx="7" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<rect x="30" y="186" width="168" height="30" fill="#534AB7" clip-path="url(#clSqlParser)"/>
+<text x="114" y="202" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">SqlParser</text>
+<line x1="30" y1="216" x2="198" y2="216" stroke="#534AB7" stroke-width="0.6"/>
+<text x="36" y="230" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+parse(sql) AST</text>
+<text x="36" y="245" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+parse_train(sql) Stmt</text>
+<clipPath id="clQueryPlanner"><rect x="30" y="274" width="168" height="112" rx="7"/></clipPath>
+<rect x="30" y="274" width="168" height="112" rx="7" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<rect x="30" y="274" width="168" height="30" fill="#534AB7" clip-path="url(#clQueryPlanner)"/>
+<text x="114" y="290" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">QueryPlanner</text>
+<line x1="30" y1="304" x2="198" y2="304" stroke="#534AB7" stroke-width="0.6"/>
+<text x="36" y="318" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">-stats: TableStats</text>
+<line x1="30" y1="328" x2="198" y2="328" stroke="#534AB7" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="36" y="342" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+build_logical(ast) LogicalPlan</text>
+<text x="36" y="357" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+optimize(lp) PhysicalPlan</text>
+<text x="36" y="372" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+select_index(pred) AccessPath</text>
+<clipPath id="clExecutionEngine"><rect x="30" y="400" width="168" height="112" rx="7"/></clipPath>
+<rect x="30" y="400" width="168" height="112" rx="7" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+<rect x="30" y="400" width="168" height="30" fill="#534AB7" clip-path="url(#clExecutionEngine)"/>
+<text x="114" y="416" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">ExecutionEngine</text>
+<line x1="30" y1="430" x2="198" y2="430" stroke="#534AB7" stroke-width="0.6"/>
+<text x="36" y="444" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">-ctx: ExecutionContext</text>
+<line x1="30" y1="454" x2="198" y2="454" stroke="#534AB7" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="36" y="468" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+execute(plan) ResultSet</text>
+<text x="36" y="483" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+next() Option~Row~</text>
+<text x="36" y="498" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#26215C">+close()</text>
+<clipPath id="clDatabase"><rect x="258" y="30" width="168" height="97" rx="7"/></clipPath>
+<rect x="258" y="30" width="168" height="97" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<rect x="258" y="30" width="168" height="30" fill="#0F6E56" clip-path="url(#clDatabase)"/>
+<text x="342" y="46" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">Database</text>
+<line x1="258" y1="60" x2="426" y2="60" stroke="#0F6E56" stroke-width="0.6"/>
+<text x="264" y="74" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+config: Config</text>
+<line x1="258" y1="84" x2="426" y2="84" stroke="#0F6E56" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="264" y="98" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+start(port) Result</text>
+<text x="264" y="113" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+shutdown() Result</text>
+<clipPath id="clTransactionManager"><rect x="258" y="141" width="168" height="142" rx="7"/></clipPath>
+<rect x="258" y="141" width="168" height="142" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<rect x="258" y="141" width="168" height="30" fill="#0F6E56" clip-path="url(#clTransactionManager)"/>
+<text x="342" y="157" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">TransactionManager</text>
+<line x1="258" y1="171" x2="426" y2="171" stroke="#0F6E56" stroke-width="0.6"/>
+<text x="264" y="185" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-txn_id: AtomicU64</text>
+<text x="264" y="200" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-active: HashMap</text>
+<line x1="258" y1="210" x2="426" y2="210" stroke="#0F6E56" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="264" y="224" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+begin() TxnId</text>
+<text x="264" y="239" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+commit(id) Result</text>
+<text x="264" y="254" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+rollback(id) Result</text>
+<text x="264" y="269" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+is_visible(xmin,xmax) bool</text>
+<clipPath id="clCatalog"><rect x="258" y="297" width="168" height="127" rx="7"/></clipPath>
+<rect x="258" y="297" width="168" height="127" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<rect x="258" y="297" width="168" height="30" fill="#0F6E56" clip-path="url(#clCatalog)"/>
+<text x="342" y="313" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">Catalog</text>
+<line x1="258" y1="327" x2="426" y2="327" stroke="#0F6E56" stroke-width="0.6"/>
+<text x="264" y="341" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-tables: HashMap</text>
+<text x="264" y="356" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-indexes: HashMap</text>
+<line x1="258" y1="366" x2="426" y2="366" stroke="#0F6E56" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="264" y="380" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+get_table(name) Schema</text>
+<text x="264" y="395" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+create_table(s) Result</text>
+<text x="264" y="410" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+drop_table(name) Result</text>
+<clipPath id="clBPlusTree"><rect x="258" y="438" width="168" height="142" rx="7"/></clipPath>
+<rect x="258" y="438" width="168" height="142" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<rect x="258" y="438" width="168" height="30" fill="#0F6E56" clip-path="url(#clBPlusTree)"/>
+<text x="342" y="454" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">BPlusTree</text>
+<line x1="258" y1="468" x2="426" y2="468" stroke="#0F6E56" stroke-width="0.6"/>
+<text x="264" y="482" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-root: PageId</text>
+<text x="264" y="497" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-order: u32</text>
+<line x1="258" y1="507" x2="426" y2="507" stroke="#0F6E56" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="264" y="521" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+insert(key,rid) Result</text>
+<text x="264" y="536" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+lookup(key) Option~RID~</text>
+<text x="264" y="551" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+range(lo,hi) Iterator</text>
+<text x="264" y="566" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+delete(key) Result</text>
+<clipPath id="clHashIndex"><rect x="258" y="594" width="168" height="127" rx="7"/></clipPath>
+<rect x="258" y="594" width="168" height="127" rx="7" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+<rect x="258" y="594" width="168" height="30" fill="#0F6E56" clip-path="url(#clHashIndex)"/>
+<text x="342" y="610" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">HashIndex</text>
+<line x1="258" y1="624" x2="426" y2="624" stroke="#0F6E56" stroke-width="0.6"/>
+<text x="264" y="638" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-depth: u8</text>
+<text x="264" y="653" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">-dir: Vec~PageId~</text>
+<line x1="258" y1="663" x2="426" y2="663" stroke="#0F6E56" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="264" y="677" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+insert(key,rid) Result</text>
+<text x="264" y="692" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+lookup(key) Option~RID~</text>
+<text x="264" y="707" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#04342C">+delete(key) Result</text>
+<clipPath id="clBufferPool"><rect x="486" y="30" width="168" height="142" rx="7"/></clipPath>
+<rect x="486" y="30" width="168" height="142" rx="7" fill="#FEF3E2" stroke="#A0600A" stroke-width="1"/>
+<rect x="486" y="30" width="168" height="30" fill="#A0600A" clip-path="url(#clBufferPool)"/>
+<text x="570" y="46" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">BufferPool</text>
+<line x1="486" y1="60" x2="654" y2="60" stroke="#A0600A" stroke-width="0.6"/>
+<text x="492" y="74" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">-frames: Vec~Frame~</text>
+<text x="492" y="89" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">-replacer: LruKReplacer</text>
+<line x1="486" y1="99" x2="654" y2="99" stroke="#A0600A" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="492" y="113" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+fetch_page(id) Page</text>
+<text x="492" y="128" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+new_page() PageId</text>
+<text x="492" y="143" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+flush_page(id) Result</text>
+<text x="492" y="158" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+unpin(id, dirty)</text>
+<clipPath id="clHeapFile"><rect x="486" y="186" width="168" height="127" rx="7"/></clipPath>
+<rect x="486" y="186" width="168" height="127" rx="7" fill="#FEF3E2" stroke="#A0600A" stroke-width="1"/>
+<rect x="486" y="186" width="168" height="30" fill="#A0600A" clip-path="url(#clHeapFile)"/>
+<text x="570" y="202" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">HeapFile</text>
+<line x1="486" y1="216" x2="654" y2="216" stroke="#A0600A" stroke-width="0.6"/>
+<text x="492" y="230" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">-table_id: TableId</text>
+<line x1="486" y1="240" x2="654" y2="240" stroke="#A0600A" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="492" y="254" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+insert(row,tid) RID</text>
+<text x="492" y="269" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+update(rid,row) Result</text>
+<text x="492" y="284" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+delete(rid,tid) Result</text>
+<text x="492" y="299" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+scan() Iterator</text>
+<clipPath id="clWalWriter"><rect x="486" y="327" width="168" height="142" rx="7"/></clipPath>
+<rect x="486" y="327" width="168" height="142" rx="7" fill="#FEF3E2" stroke="#A0600A" stroke-width="1"/>
+<rect x="486" y="327" width="168" height="30" fill="#A0600A" clip-path="url(#clWalWriter)"/>
+<text x="570" y="343" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">WalWriter</text>
+<line x1="486" y1="357" x2="654" y2="357" stroke="#A0600A" stroke-width="0.6"/>
+<text x="492" y="371" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">-lsn: AtomicU64</text>
+<text x="492" y="386" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">-dir: PathBuf</text>
+<line x1="486" y1="396" x2="654" y2="396" stroke="#A0600A" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="492" y="410" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+append(rec) LSN</text>
+<text x="492" y="425" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+flush(lsn) Result</text>
+<text x="492" y="440" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+checkpoint() Result</text>
+<text x="492" y="455" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+recover(dir) Result</text>
+<clipPath id="clWalRecord"><rect x="486" y="483" width="168" height="147" rx="7"/></clipPath>
+<rect x="486" y="483" width="168" height="147" rx="7" fill="#F3F2EF" stroke="#888882" stroke-width="1"/>
+<rect x="486" y="483" width="168" height="42" fill="#555550" clip-path="url(#clWalRecord)"/>
+<text x="570" y="495" text-anchor="middle" dominant-baseline="central" font-family="monospace" font-size="8.5" font-style="italic" fill="#ffffff" opacity="0.85">«enumeration»</text>
+<text x="570" y="512" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">WalRecord</text>
+<line x1="486" y1="525" x2="654" y2="525" stroke="#888882" stroke-width="0.6"/>
+<text x="492" y="539" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">Insert</text>
+<text x="492" y="554" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">Update</text>
+<text x="492" y="569" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">Delete</text>
+<text x="492" y="584" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">Commit</text>
+<text x="492" y="599" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">Abort</text>
+<text x="492" y="614" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">Checkpoint</text>
+<line x1="486" y1="624" x2="654" y2="624" stroke="#888882" stroke-width="0.4" stroke-dasharray="3,2"/>
+<clipPath id="clIndex"><rect x="486" y="644" width="168" height="101" rx="7"/></clipPath>
+<rect x="486" y="644" width="168" height="101" rx="7" fill="#FDE8EF" stroke="#B03060" stroke-width="1"/>
+<rect x="486" y="644" width="168" height="42" fill="#B03060" clip-path="url(#clIndex)"/>
+<text x="570" y="656" text-anchor="middle" dominant-baseline="central" font-family="monospace" font-size="8.5" font-style="italic" fill="#ffffff" opacity="0.85">«interface»</text>
+<text x="570" y="673" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">Index</text>
+<line x1="486" y1="686" x2="654" y2="686" stroke="#B03060" stroke-width="0.6"/>
+<text x="492" y="700" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#5A0030">+insert(key,rid) Result</text>
+<text x="492" y="715" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#5A0030">+lookup(key) Option~RID~</text>
+<text x="492" y="730" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#5A0030">+delete(key) Result</text>
+<clipPath id="clMlEngine"><rect x="486" y="759" width="168" height="112" rx="7"/></clipPath>
+<rect x="486" y="759" width="168" height="112" rx="7" fill="#FEF3E2" stroke="#A0600A" stroke-width="1"/>
+<rect x="486" y="759" width="168" height="30" fill="#A0600A" clip-path="url(#clMlEngine)"/>
+<text x="570" y="775" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">MlEngine</text>
+<line x1="486" y1="789" x2="654" y2="789" stroke="#A0600A" stroke-width="0.6"/>
+<text x="492" y="803" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">-cache: LruCache~Model~</text>
+<line x1="486" y1="813" x2="654" y2="813" stroke="#A0600A" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="492" y="827" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+train(stmt,txn) Model</text>
+<text x="492" y="842" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+predict(name,feats) f64</text>
+<text x="492" y="857" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#4A2C00">+drop_model(name) Result</text>
+<clipPath id="clModel"><rect x="486" y="885" width="168" height="154" rx="7"/></clipPath>
+<rect x="486" y="885" width="168" height="154" rx="7" fill="#F3F2EF" stroke="#888882" stroke-width="1"/>
+<rect x="486" y="885" width="168" height="42" fill="#555550" clip-path="url(#clModel)"/>
+<text x="570" y="897" text-anchor="middle" dominant-baseline="central" font-family="monospace" font-size="8.5" font-style="italic" fill="#ffffff" opacity="0.85">«enumeration»</text>
+<text x="570" y="914" text-anchor="middle" dominant-baseline="central" font-family="Arial,sans-serif" font-size="11.5" font-weight="700" fill="#ffffff">Model</text>
+<line x1="486" y1="927" x2="654" y2="927" stroke="#888882" stroke-width="0.6"/>
+<text x="492" y="941" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">LinearRegression</text>
+<text x="492" y="956" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">LogisticRegression</text>
+<text x="492" y="971" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">KMeans</text>
+<text x="492" y="986" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">DecisionTree</text>
+<line x1="486" y1="996" x2="654" y2="996" stroke="#888882" stroke-width="0.4" stroke-dasharray="3,2"/>
+<text x="492" y="1010" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">+predict(features) f64</text>
+<text x="492" y="1025" dominant-baseline="central" font-family="monospace" font-size="8.5" fill="#2a2a28">+serialize() Vec~u8~</text>
+<rect x="10" y="1101" width="664" height="30" rx="5" fill="#f0efea" stroke="#ddd" stroke-width="0.5"/>
+<line x1="26" y1="1116" x2="74" y2="1116" stroke="#534AB7" stroke-width="1.4" marker-start="url(#dia)" marker-end="url(#ahp)"/>
+<text x="80" y="1116" dominant-baseline="central" font-family="Arial,sans-serif" font-size="9.5" fill="#555">Composition</text>
+<line x1="150" y1="1116" x2="198" y2="1116" stroke="#777" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#ah)"/>
+<text x="204" y="1116" dominant-baseline="central" font-family="Arial,sans-serif" font-size="9.5" fill="#555">Dependency</text>
+<line x1="268" y1="1116" x2="316" y2="1116" stroke="#0F6E56" stroke-width="1.4" stroke-dasharray="6,4" marker-end="url(#tri)"/>
+<text x="322" y="1116" dominant-baseline="central" font-family="Arial,sans-serif" font-size="9.5" fill="#555">Implements</text>
+<rect x="388" y="1109" width="11" height="11" rx="2" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="402" y="1115" dominant-baseline="central" font-family="Arial,sans-serif" font-size="9.5" fill="#555">Query/ML</text>
+<rect x="452" y="1109" width="11" height="11" rx="2" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="466" y="1115" dominant-baseline="central" font-family="Arial,sans-serif" font-size="9.5" fill="#555">Core DB</text>
+<rect x="510" y="1109" width="11" height="11" rx="2" fill="#FEF3E2" stroke="#A0600A" stroke-width="0.5"/>
+<text x="524" y="1115" dominant-baseline="central" font-family="Arial,sans-serif" font-size="9.5" fill="#555">Storage</text>
+</svg>
