@@ -1,0 +1,66 @@
+openapi: 3.0.0
+info:
+  title: RustDB API
+  version: 0.1.0
+  description: SQL Database API for RustDB
+
+servers:
+  - url: http://localhost:5432
+    description: Development server
+  - url: https://api.rustdb.example.com
+    description: Production server
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /query:
+    post:
+      summary: Execute a SQL query
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sql:
+                  type: string
+                  description: SQL query string
+                params:
+                  type: array
+                  description: Query parameters
+      responses:
+        '200':
+          description: Query executed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rows:
+                    type: array
+                  columns:
+                    type: array
+
+  /transaction:
+    post:
+      summary: Begin a transaction
+      responses:
+        '201':
+          description: Transaction started
+
+  /health:
+    get:
+      summary: Health check
+      security: []
+      responses:
+        '200':
+          description: Server is healthy
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key

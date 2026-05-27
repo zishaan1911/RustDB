@@ -1,0 +1,29 @@
+# Staging Configuration
+
+[server]
+host = "0.0.0.0"
+port = 5432
+workers = 4
+timeout_ms = 30000
+
+[database]
+path = "/data/rustdb_staging.db"
+cache_size_mb = 1024
+page_size = 8192
+
+[logging]
+level = "info"
+format = "json"
+
+[security]
+tls_enabled = true
+auth_enabled = true
+
+[ml]
+cache_size = 50
+model_dir = "/models"
+
+[observability]
+metrics_enabled = true
+tracing_enabled = true
+slow_query_threshold_ms = 5000
