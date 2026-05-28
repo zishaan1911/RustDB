@@ -6,7 +6,7 @@ use serial_test::serial;
 use tower::ServiceExt;
 
 use rustdb_server::security::auth::{
-    api_key::{ApiKey, ApiRole},
+    api_key::{ApiKey, ApiRole, generate_api_key},
     hashing::{hash_api_key, verify_api_key},
     middleware::{auth_middleware, ApiKeyStore, set_dev_mode},
     rate_limit::check_rate_limit,
@@ -284,6 +284,19 @@ fn verify_key_rejects_revoked_key() {
     };
 
     assert!(!verify_key(secret, &stored));
+}
+
+#[serial]
+#[test]
+fn api_key_generation_creates_valid_pair() {
+    let (api_key, pair) = generate_api_key(ApiRole::ReadWrite)
+        .expect("generate_api_key should succeed");
+
+    assert_eq!(api_key.id, pair.key_id);
+    assert_eq!(api_key.role, ApiRole::ReadWrite);
+    assert!(!api_key.key_hash.is_empty());
+    assert!(!pair.secret.is_empty());
+    assert!(verify_api_key(&api_key.key_hash, &pair.secret));
 }
 
 #[serial]

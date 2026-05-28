@@ -65,6 +65,21 @@ To validate a secret against a stored hash, use:
 let ok = verify_api_key(&stored_hash, raw_secret);
 ```
 
+### API key generation
+
+The helper `generate_api_key(role)` creates a new API key record together with the raw secret.
+It returns a tuple of `(ApiKey, ApiKeyPair)` where `ApiKey` is safe to persist and `ApiKeyPair` carries the secret that must be delivered securely once.
+
+```rust
+let (api_key, api_key_pair) = generate_api_key(ApiRole::ReadWrite)?;
+
+// Persist `api_key` in storage and deliver only the raw secret once:
+let key_id = api_key_pair.key_id;
+let raw_secret = api_key_pair.secret;
+```
+
+Do not store `api_key_pair.secret` in plaintext after delivery.
+
 ### Hashing implementation
 
 The project uses Argon2 with secure defaults:
