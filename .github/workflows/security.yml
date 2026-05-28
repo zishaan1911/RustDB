@@ -1,0 +1,11 @@
+name: No-op Security Workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: No-op step
+        run: echo "noop"
+
