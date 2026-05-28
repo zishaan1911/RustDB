@@ -7,8 +7,11 @@
 mod security;
 
 use crate::security::crypto::nonce;
+use crate::security::crypto::nonce::NonceType;
 
 fn main()
 {
     nonce::generate_all_nonces_temp();
+
+    println!("{:?}", nonce::generate_nonce(NonceType::Hybrid(16)));
 }

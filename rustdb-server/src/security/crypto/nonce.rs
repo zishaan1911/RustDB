@@ -151,49 +151,135 @@ pub fn generate_xchacha20_nonce() -> [u8; 24]
     nonce
 }
 
+/// All types of nonces
+/// Printable for testing and debugging purposes
+#[derive(Debug)]
+pub enum NonceType
+{
+    Secure(usize),
+    Hex(usize),
+    Base64(usize),
+    UrlSafeBase64(usize),
+    Uuid,
+    Timestamp(usize),
+    Counter,
+    Hybrid(usize),
+    AesGcm,
+    XChaCha20,
+}
+
+/// All return types of nonces
+/// Printable for testing and debugging purposes
+#[derive(Debug)]
+pub enum NonceResult
+{
+    String(String),
+    Bytes(Vec<u8>),
+    U64(u64),
+}
+
+/// Central nonce generator
+/// Dispatches to all available nonce types
+pub fn generate_nonce(nonce_type: NonceType) -> NonceResult
+{
+    match nonce_type
+    {
+        // Cryptographic random nonce
+        NonceType::Secure(size) =>
+        {
+            NonceResult::Bytes(generate_secure_nonce(size))
+        }
+
+        // Hex encoded nonce
+        NonceType::Hex(size) =>
+        {
+            NonceResult::String(generate_hex_nonce(size))
+        }
+
+        // Base64 encoded nonce
+        NonceType::Base64(size) =>
+        {
+            NonceResult::String(generate_base64_nonce(size))
+        }
+
+        // URL-safe Base64 nonce
+        NonceType::UrlSafeBase64(size) =>
+        {
+            NonceResult::String(generate_urlsafe_nonce(size))
+        }
+
+        // UUID v4 nonce
+        NonceType::Uuid =>
+        {
+            NonceResult::String(generate_uuid_nonce())
+        }
+
+        // Timestamp + random nonce
+        NonceType::Timestamp(random_size) =>
+        {
+            NonceResult::String(generate_timestamp_nonce(random_size))
+        }
+
+        // Atomic counter nonce
+        NonceType::Counter =>
+        {
+            NonceResult::U64(generate_counter_nonce())
+        }
+
+        // Hybrid nonce generator
+        NonceType::Hybrid(random_size) =>
+        {
+            NonceResult::String(generate_hybrid_nonce(random_size))
+        }
+
+        // AES-GCM nonce (96-bit)
+        NonceType::AesGcm =>
+        {
+            NonceResult::Bytes(generate_aes_gcm_nonce().to_vec())
+        }
+
+        // XChaCha20 nonce (192-bit)
+        NonceType::XChaCha20 =>
+        {
+            NonceResult::Bytes(generate_xchacha20_nonce().to_vec())
+        }
+    }
+}
+
 /// Temporary function to generate all nonce types for testing
 /// Can be removed later, or used in benchmarks
 pub fn generate_all_nonces_temp()
 {
-    // Raw cryptographic nonce
-    let secure_nonce = generate_secure_nonce(16);
-
-    // Hex encoded nonce
-    let hex_nonce = generate_hex_nonce(16);
-
-    // Base64 encoded nonce
-    let base64_nonce = generate_base64_nonce(16);
-
-    // URL-safe Base64 nonce
-    let urlsafe_nonce = generate_urlsafe_nonce(16);
-
-    // UUID nonce
-    let uuid_nonce = generate_uuid_nonce();
-
-    // Timestamp nonce
-    let timestamp_nonce = generate_timestamp_nonce(16);
-
-    // Counter nonce
-    let counter_nonce = generate_counter_nonce();
-
-    // Hybrid nonce
-    let hybrid_nonce = generate_hybrid_nonce(16);
-
-    // AES-GCM nonce (12 bytes)
-    let aes_gcm_nonce = generate_aes_gcm_nonce();
-
-    // XChaCha20 nonce (24 bytes)
-    let xchacha20_nonce = generate_xchacha20_nonce();
+    let secure_nonce = generate_nonce(NonceType::Secure(16));
+    let hex_nonce = generate_nonce(NonceType::Hex(16));
+    let base64_nonce = generate_nonce(NonceType::Base64(16));
+    let urlsafe_nonce = generate_nonce(NonceType::UrlSafeBase64(16));
+    let uuid_nonce = generate_nonce(NonceType::Uuid);
+    let timestamp_nonce = generate_nonce(NonceType::Timestamp(16));
+    let counter_nonce = generate_nonce(NonceType::Counter);
+    let hybrid_nonce = generate_nonce(NonceType::Hybrid(16));
+    let aes_gcm_nonce = generate_nonce(NonceType::AesGcm);
+    let xchacha20_nonce = generate_nonce(NonceType::XChaCha20);
 
     // Prevent unused warnings (optional, for testing)
-    println!("{:?}", secure_nonce);
-    println!("{}", hex_nonce);
-    println!("{}", base64_nonce);
-    println!("{}", urlsafe_nonce);
-    println!("{}", uuid_nonce);
-    println!("{}", timestamp_nonce);
-    println!("{}", counter_nonce);
-    println!("{}", hybrid_nonce);
-    println!("{:?}", aes_gcm_nonce);
-    println!("{:?}", xchacha20_nonce);
+    fn print_nonce_result(label: &str, result: NonceResult)
+    {
+        match result
+        {
+            NonceResult::String(value) => println!("{}: {}", label, value),
+            NonceResult::Bytes(value) => println!("{}: {:?}", label, value),
+            NonceResult::U64(value) => println!("{}: {}", label, value),
+        }
+    }
+
+    print_nonce_result("secure_nonce", secure_nonce);
+    print_nonce_result("hex_nonce", hex_nonce);
+    print_nonce_result("base64_nonce", base64_nonce);
+    print_nonce_result("urlsafe_nonce", urlsafe_nonce);
+    print_nonce_result("uuid_nonce", uuid_nonce);
+    print_nonce_result("timestamp_nonce", timestamp_nonce);
+    print_nonce_result("counter_nonce", counter_nonce);
+    print_nonce_result("hybrid_nonce", hybrid_nonce);
+    print_nonce_result("aes_gcm_nonce", aes_gcm_nonce);
+    print_nonce_result("xchacha20_nonce", xchacha20_nonce);
 }
