@@ -1,11 +1,22 @@
-name: No-op CI
+name: CI
 on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  noop:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: No-op step
-        run: echo "noop"
+      - uses: actions/checkout@v4
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Run cargo tests
+        run: cargo test --workspace --quiet
 

@@ -1,13 +1,18 @@
-# Temporary, no functionality at the moment
-# Just to avoid errors when commiting and the yml is empty
-name: No-op Security Workflow
+name: Security Regression
 on:
   workflow_dispatch:
 
 jobs:
-  noop:
+  security-tests:
     runs-on: ubuntu-latest
+
     steps:
-      - name: No-op step
-        run: echo "noop"
+      - uses: actions/checkout@v4
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      - name: Run security tests
+        run: cargo test --workspace --quiet
 
