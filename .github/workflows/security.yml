@@ -1,3 +1,5 @@
+# Temporary, no functionality at the moment
+# Just to avoid errors when commiting and the yml is empty
 name: No-op Security Workflow
 on:
   workflow_dispatch:
