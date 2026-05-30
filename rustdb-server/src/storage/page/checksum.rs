@@ -1,218 +1,213 @@
 use crc32fast::Hasher;
 use thiserror::Error;
 
-// Byte length of the CRC32 checksum appended to each WAL record.
-pub const WAL_CHECKSUM_LEN: usize = 4;
+// The byte offset within a page where the checksum field lives.
+// Layout assumption:
+//   [0..4]  page_id       (u32)
+//   [4..8]  checksum      (u32)  ← this field is zeroed before hashing
+//   [8..10] slot_count    (u16)
+//   [10..12] free_space_pointer (u16)
+//   [12..14] flags        (u16)
+//   [14..22] lsn          (u64)
+//   [22..]  slot array + data area
+pub const CHECKSUM_OFFSET: usize = 4;
+pub const CHECKSUM_LEN: usize = 4;
+
+// Size re-declared here so this module compiles standalone in tests.
+pub const PAGE_SIZE: usize = 8192;
 
 #[derive(Debug, Error)]
-pub enum WalChecksumError {
-    #[error("WAL record checksum mismatch: stored={stored:#010x}, computed={computed:#010x}")]
+pub enum ChecksumError {
+    #[error("page checksum mismatch: stored={stored:#010x}, computed={computed:#010x}")]
     Mismatch { stored: u32, computed: u32 },
 
-    #[error("WAL record buffer too short ({len} bytes) to contain a {WAL_CHECKSUM_LEN}-byte checksum")]
-    BufferTooShort { len: usize },
+    #[error("buffer length {actual} does not match expected page size {expected}")]
+    BadBufferLength { actual: usize, expected: usize },
 }
 
-//Lowlevel helpers
-
-// Compute CRC32 over arbitrary bytes.
-// This is the building block used by both the framing helpers below and by callers that construct checksums incrementally.
-#[inline]
-pub fn compute_raw(data: &[u8]) -> u32 {
-    let mut h = Hasher::new();
-    h.update(data);
-    h.finalize()
-}
-
-// Continue an in-progress CRC32 computation.
-// Useful when a WAL record is built across multiple buffers so that a single allocation is not required.
-#[inline]
-pub fn update_hasher(hasher: &mut Hasher, data: &[u8]) {
-    hasher.update(data);
-}
-
-//Framed record helpers
-
-//Compute the CRC32 for the payload portion of a WAL record.
-pub fn compute_for_payload(payload: &[u8]) -> u32 {
-    compute_raw(payload)
-}
-
-// Append a CRC32 checksum to payload, returning the framed record as a new Vec<u8>.
-pub fn frame(payload: &[u8]) -> Vec<u8> {
-    let crc = compute_for_payload(payload);
-    let mut out = Vec::with_capacity(payload.len() + WAL_CHECKSUM_LEN);
-    out.extend_from_slice(payload);
-    out.extend_from_slice(&crc.to_le_bytes());
-    out
-}
-
-// Append a CRC32 checksum to `buf` in-place.
-// Equivalent to [frame] but avoids an allocation when the caller already owns a `Vec`.
-pub fn frame_in_place(buf: &mut Vec<u8>) {
-    let crc = compute_for_payload(buf);
-    buf.extend_from_slice(&crc.to_le_bytes());
-}
-
-// Read the CRC32 stored in the last four bytes of a framed record.
-pub fn read_stored(framed: &[u8]) -> Result<u32, WalChecksumError> {
-    if framed.len() < WAL_CHECKSUM_LEN {
-        return Err(WalChecksumError::BufferTooShort { len: framed.len() });
+// Compute the CRC32 checksum for a page buffer.
+// Does not panic, returns an error if the buffer is the wrong size.
+pub fn compute(page: &[u8]) -> Result<u32, ChecksumError> {
+    if page.len() != PAGE_SIZE {
+        return Err(ChecksumError::BadBufferLength {
+            actual: page.len(),
+            expected: PAGE_SIZE,
+        });
     }
-    let start = framed.len() - WAL_CHECKSUM_LEN;
-    let bytes: [u8; 4] = framed[start..].try_into().expect("slice is exactly 4 bytes");
-    Ok(u32::from_le_bytes(bytes))
+
+    let mut hasher = Hasher::new();
+    hasher.update(&page[..CHECKSUM_OFFSET]);
+    hasher.update(&[0u8; CHECKSUM_LEN]);
+    hasher.update(&page[CHECKSUM_OFFSET + CHECKSUM_LEN..]);
+
+    Ok(hasher.finalize())
 }
 
-// Verify the CRC32 of a framed WAL record.
-// Call this after reading a record from the WAL segment file and before deserialising it.
-pub fn verify(framed: &[u8]) -> Result<(), WalChecksumError> {
-    if framed.len() < WAL_CHECKSUM_LEN {
-        return Err(WalChecksumError::BufferTooShort { len: framed.len() });
-    }
-    let payload_end = framed.len() - WAL_CHECKSUM_LEN;
-    let stored = read_stored(framed)?;
-    let computed = compute_for_payload(&framed[..payload_end]);
-    if stored != computed {
-        return Err(WalChecksumError::Mismatch { stored, computed });
-    }
+// Write the CRC32 checksum into the page buffer in-place.
+// Call this just before writing a page to disk.
+pub fn write(page: &mut [u8]) -> Result<(), ChecksumError> {
+    let crc = compute(page)?;
+    let bytes = crc.to_le_bytes();
+    page[CHECKSUM_OFFSET..CHECKSUM_OFFSET + CHECKSUM_LEN].copy_from_slice(&bytes);
     Ok(())
 }
 
-// Return a reference to the payload portion of a framed record (everything except the trailing checksum bytes).
-pub fn payload(framed: &[u8]) -> Option<&[u8]> {
-    let n = framed.len().checked_sub(WAL_CHECKSUM_LEN)?;
-    Some(&framed[..n])
+pub fn read_stored(page: &[u8]) -> Result<u32, ChecksumError> {
+    if page.len() != PAGE_SIZE {
+        return Err(ChecksumError::BadBufferLength {
+            actual: page.len(),
+            expected: PAGE_SIZE,
+        });
+    }
+    let bytes: [u8; 4] = page[CHECKSUM_OFFSET..CHECKSUM_OFFSET + CHECKSUM_LEN]
+        .try_into()
+        .expect("slice is exactly 4 bytes");
+    Ok(u32::from_le_bytes(bytes))
+}
+
+// Verify the page checksum.
+// Call this immediately after reading a page from disk.
+pub fn verify(page: &[u8]) -> Result<(), ChecksumError> {
+    let stored = read_stored(page)?;
+    let computed = compute(page)?;
+    if stored != computed {
+        return Err(ChecksumError::Mismatch { stored, computed });
+    }
+    Ok(())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    // compute_raw
+    fn blank_page() -> Vec<u8> {
+        vec![0u8; PAGE_SIZE]
+    }
+
+    fn page_with_id(page_id: u32) -> Vec<u8> {
+        let mut buf = blank_page();
+        buf[..4].copy_from_slice(&page_id.to_le_bytes());
+        buf
+    }
+
+    // compute
 
     #[test]
-    fn compute_raw_is_deterministic() {
-        let data = b"hello wal";
-        assert_eq!(compute_raw(data), compute_raw(data));
+    fn compute_accepts_page_size_buffer() {
+        let page = blank_page();
+        assert!(compute(&page).is_ok());
     }
 
     #[test]
-    fn compute_raw_differs_for_different_inputs() {
-        assert_ne!(compute_raw(b"aaa"), compute_raw(b"aab"));
+    fn compute_rejects_wrong_size() {
+        let short = vec![0u8; PAGE_SIZE - 1];
+        let err = compute(&short).unwrap_err();
+        assert!(matches!(err, ChecksumError::BadBufferLength { .. }));
     }
 
     #[test]
-    fn compute_raw_empty_is_defined() {
-        // CRC32 of empty input is 0x00000000 per the spec.
-        assert_eq!(compute_raw(b""), 0x0000_0000);
-    }
-
-    // frame
-
-    #[test]
-    fn frame_appends_four_bytes() {
-        let payload = b"record body";
-        let framed = frame(payload);
-        assert_eq!(framed.len(), payload.len() + WAL_CHECKSUM_LEN);
+    fn compute_is_deterministic() {
+        let page = page_with_id(42);
+        let a = compute(&page).unwrap();
+        let b = compute(&page).unwrap();
+        assert_eq!(a, b);
     }
 
     #[test]
-    fn frame_and_frame_in_place_agree() {
-        let payload = b"txn begin";
-        let via_frame = frame(payload);
-
-        let mut buf = payload.to_vec();
-        frame_in_place(&mut buf);
-
-        assert_eq!(via_frame, buf);
+    fn compute_is_sensitive_to_content() {
+        let page_a = page_with_id(1);
+        let page_b = page_with_id(2);
+        assert_ne!(
+            compute(&page_a).unwrap(),
+            compute(&page_b).unwrap(),
+            "different page_ids must produce different checksums"
+        );
     }
 
     #[test]
-    fn frame_checksum_matches_compute_for_payload() {
-        let payload = b"insert row data";
-        let framed = frame(payload);
-        let stored = read_stored(&framed).unwrap();
-        let expected = compute_for_payload(payload);
-        assert_eq!(stored, expected);
+    fn compute_ignores_stored_checksum_field() {
+        let mut page_zero_cs = page_with_id(7);
+        let expected = compute(&page_zero_cs).unwrap();
+
+        // Put garbage in the checksum slot.
+        page_zero_cs[CHECKSUM_OFFSET..CHECKSUM_OFFSET + 4].copy_from_slice(&[0xDE, 0xAD, 0xBE, 0xEF]);
+        let actual = compute(&page_zero_cs).unwrap();
+
+        assert_eq!(
+            expected, actual,
+            "compute must zero-out the checksum field before hashing"
+        );
+    }
+
+    // write / read_stored
+
+    #[test]
+    fn write_stores_correct_checksum() {
+        let mut page = page_with_id(99);
+        write(&mut page).unwrap();
+
+        let stored = read_stored(&page).unwrap();
+        let computed = compute(&page).unwrap();
+        assert_eq!(stored, computed);
+    }
+
+    #[test]
+    fn write_is_idempotent() {
+        let mut page = page_with_id(5);
+        write(&mut page).unwrap();
+        let first = read_stored(&page).unwrap();
+        write(&mut page).unwrap();
+        let second = read_stored(&page).unwrap();
+        assert_eq!(first, second, "writing the checksum twice must be stable");
     }
 
     // verify
 
     #[test]
-    fn verify_passes_for_correctly_framed_record() {
-        let framed = frame(b"commit txn 42");
-        assert!(verify(&framed).is_ok());
+    fn verify_passes_after_write() {
+        let mut page = page_with_id(1);
+        write(&mut page).unwrap();
+        assert!(verify(&page).is_ok());
     }
 
     #[test]
-    fn verify_fails_on_corrupted_payload() {
-        let mut framed = frame(b"delete row");
-        // Flip a bit in the payload.
-        framed[0] ^= 0x80;
-        assert!(matches!(
-            verify(&framed).unwrap_err(),
-            WalChecksumError::Mismatch { .. }
-        ));
+    fn verify_fails_on_corrupted_data() {
+        let mut page = page_with_id(3);
+        write(&mut page).unwrap();
+
+        // Flip a bit somewhere in the data area.
+        let data_byte_offset = CHECKSUM_OFFSET + CHECKSUM_LEN + 10;
+        page[data_byte_offset] ^= 0xFF;
+
+        let err = verify(&page).unwrap_err();
+        assert!(matches!(err, ChecksumError::Mismatch { .. }));
     }
 
     #[test]
-    fn verify_fails_on_corrupted_checksum() {
-        let mut framed = frame(b"update row");
-        let last = framed.len() - 1;
-        framed[last] ^= 0xFF;
-        assert!(matches!(
-            verify(&framed).unwrap_err(),
-            WalChecksumError::Mismatch { .. }
-        ));
+    fn verify_fails_on_corrupted_header_field() {
+        let mut page = page_with_id(10);
+        write(&mut page).unwrap();
+
+        // Corrupt the page_id field.
+        page[0] ^= 0x01;
+
+        let err = verify(&page).unwrap_err();
+        assert!(matches!(err, ChecksumError::Mismatch { .. }));
     }
 
     #[test]
-    fn verify_rejects_too_short_buffer() {
-        let short = [0u8; 3];
+    fn verify_fails_on_zero_checksum_for_non_blank_page() {
+        let mut page = page_with_id(55);
+        let result = verify(&page);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn verify_rejects_wrong_size_buffer() {
+        let short = vec![0u8; 100];
         assert!(matches!(
             verify(&short).unwrap_err(),
-            WalChecksumError::BufferTooShort { .. }
+            ChecksumError::BadBufferLength { .. }
         ));
-    }
-
-    #[test]
-    fn verify_accepts_exactly_four_bytes() {
-        // if record payload is empty: the framed form is just the 4-byte
-CRC of an empty slice.
-        let framed = frame(b"");
-        assert_eq!(framed.len(), WAL_CHECKSUM_LEN);
-        assert!(verify(&framed).is_ok());
-    }
-
-    // payload helper
-
-    #[test]
-    fn payload_strips_checksum() {
-        let original = b"checkpoint";
-        let framed = frame(original);
-        assert_eq!(payload(&framed).unwrap(), original);
-    }
-
-    #[test]
-    fn payload_returns_none_for_short_buffer() {
-        assert!(payload(&[0u8; 3]).is_none());
-    }
-
-    // incremental hashing
-
-    #[test]
-    fn incremental_hash_matches_single_pass() {
-        let part_a = b"WAL header bytes";
-        let part_b = b"WAL body bytes";
-
-        let single = compute_raw(&[part_a, part_b].concat());
-
-        let mut h = Hasher::new();
-        update_hasher(&mut h, part_a);
-        update_hasher(&mut h, part_b);
-        let incremental = h.finalize();
-
-        assert_eq!(single, incremental);
     }
 }
