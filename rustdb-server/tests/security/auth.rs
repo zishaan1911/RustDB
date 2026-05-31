@@ -1,18 +1,22 @@
-use std::sync::Arc;
-use axum::{body::Body, extract::State, http::{Request, StatusCode}};
 use axum::routing::get;
 use axum::Router;
+use axum::{
+    body::Body,
+    extract::State,
+    http::{Request, StatusCode},
+};
 use serial_test::serial;
+use std::sync::Arc;
 use tower::ServiceExt;
 
 use rustdb_server::security::auth::{
-    api_key::{ApiKey, ApiRole, generate_api_key},
+    api_key::{generate_api_key, ApiKey, ApiRole},
     hashing::{hash_api_key, verify_api_key},
-    middleware::{auth_middleware, ApiKeyStore, set_dev_mode},
+    middleware::{auth_middleware, set_dev_mode, ApiKeyStore},
     rate_limit::check_rate_limit,
-    verification::{split_bearer, verify_key, AuthContext},
     rbac::{has_permission as rbac_has_permission, Permission},
     verification::has_permission as role_has_permission,
+    verification::{split_bearer, verify_key, AuthContext},
 };
 
 struct DummyStore {
@@ -32,20 +36,20 @@ impl ApiKeyStore for DummyStore {
 async fn call_auth_request(store: Arc<DummyStore>, req: Request<Body>) -> StatusCode {
     let app = Router::new()
         .route("/test", get(|| async { StatusCode::OK }))
-        .layer(axum::middleware::from_fn_with_state(store.clone(), move |State(store): State<Arc<DummyStore>>, req, next| {
-            let store = store.clone();
-            async move { auth_middleware(req, next, store).await }
-        }));
+        .layer(axum::middleware::from_fn_with_state(
+            store.clone(),
+            move |State(store): State<Arc<DummyStore>>, req, next| {
+                let store = store.clone();
+                async move { auth_middleware(req, next, store).await }
+            },
+        ));
 
     app.oneshot(req).await.unwrap().status()
 }
 
 #[test]
 fn require_role_macro_allows_admin() {
-    let mut req = Request::builder()
-        .uri("/test")
-        .body(Body::empty())
-        .unwrap();
+    let mut req = Request::builder().uri("/test").body(Body::empty()).unwrap();
 
     req.extensions_mut().insert(AuthContext {
         key_id: "admin-key".into(),
@@ -64,10 +68,7 @@ fn require_role_macro_allows_admin() {
 
 #[test]
 fn require_role_macro_blocks_insufficient_role() {
-    let mut req = Request::builder()
-        .uri("/test")
-        .body(Body::empty())
-        .unwrap();
+    let mut req = Request::builder().uri("/test").body(Body::empty()).unwrap();
 
     req.extensions_mut().insert(AuthContext {
         key_id: "read-only-key".into(),
@@ -118,10 +119,7 @@ async fn auth_middleware_rejects_missing_header() {
         revoked: false,
     };
 
-    let req = Request::builder()
-        .uri("/test")
-        .body(Body::empty())
-        .unwrap();
+    let req = Request::builder().uri("/test").body(Body::empty()).unwrap();
 
     let status = call_auth_request(Arc::new(DummyStore { key: stored }), req).await;
     assert_eq!(status, StatusCode::UNAUTHORIZED);
@@ -217,18 +215,21 @@ async fn auth_middleware_rejects_revoked_key() {
 async fn auth_middleware_allows_dev_mode_without_authorization() {
     set_dev_mode(true);
 
-    let req = Request::builder()
-        .uri("/test")
-        .body(Body::empty())
-        .unwrap();
+    let req = Request::builder().uri("/test").body(Body::empty()).unwrap();
 
-    let status = call_auth_request(Arc::new(DummyStore { key: ApiKey {
-        id: "dev-mode".into(),
-        key_hash: hash_api_key("irrelevant").unwrap(),
-        role: ApiRole::Admin,
-        created_at: 1,
-        revoked: false,
-    }}), req).await;
+    let status = call_auth_request(
+        Arc::new(DummyStore {
+            key: ApiKey {
+                id: "dev-mode".into(),
+                key_hash: hash_api_key("irrelevant").unwrap(),
+                role: ApiRole::Admin,
+                created_at: 1,
+                revoked: false,
+            },
+        }),
+        req,
+    )
+    .await;
 
     set_dev_mode(false);
 
@@ -289,8 +290,8 @@ fn verify_key_rejects_revoked_key() {
 #[serial]
 #[test]
 fn api_key_generation_creates_valid_pair() {
-    let (api_key, pair) = generate_api_key(ApiRole::ReadWrite)
-        .expect("generate_api_key should succeed");
+    let (api_key, pair) =
+        generate_api_key(ApiRole::ReadWrite).expect("generate_api_key should succeed");
 
     assert_eq!(api_key.id, pair.key_id);
     assert_eq!(api_key.role, ApiRole::ReadWrite);
@@ -304,8 +305,14 @@ fn api_key_generation_creates_valid_pair() {
 fn verification_has_permission_behaviour() {
     assert!(role_has_permission(&ApiRole::Admin, &ApiRole::ReadOnly));
     assert!(role_has_permission(&ApiRole::ReadWrite, &ApiRole::ReadOnly));
-    assert!(role_has_permission(&ApiRole::ReadWrite, &ApiRole::ReadWrite));
-    assert!(!role_has_permission(&ApiRole::ReadOnly, &ApiRole::ReadWrite));
+    assert!(role_has_permission(
+        &ApiRole::ReadWrite,
+        &ApiRole::ReadWrite
+    ));
+    assert!(!role_has_permission(
+        &ApiRole::ReadOnly,
+        &ApiRole::ReadWrite
+    ));
 }
 
 #[serial]

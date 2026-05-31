@@ -1,27 +1,24 @@
-use std::sync::Arc;
 use axum::{
     http::{Request, StatusCode},
     middleware::Next,
     response::Response,
 };
+use std::sync::Arc;
 
 use crate::security::auth::{
+    api_key::ApiKey,
     audit::{write_audit, AuditEvent},
     rate_limit::check_rate_limit,
-    verification::{AuthContext, split_bearer, verify_key},
-    api_key::ApiKey,
+    verification::{split_bearer, verify_key, AuthContext},
 };
 
-pub trait ApiKeyStore
-{
+pub trait ApiKeyStore {
     fn find_by_id(&self, id: &str) -> Result<Option<ApiKey>, ()>;
 }
 
-static DEV_MODE: std::sync::atomic::AtomicBool =
-    std::sync::atomic::AtomicBool::new(false);
+static DEV_MODE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
-pub fn set_dev_mode(v: bool)
-{
+pub fn set_dev_mode(v: bool) {
     DEV_MODE.store(v, std::sync::atomic::Ordering::Relaxed);
 }
 
@@ -46,33 +43,31 @@ where
         .unwrap_or("unknown")
         .to_string();
 
-    if DEV_MODE.load(std::sync::atomic::Ordering::Relaxed)
-    {
+    if DEV_MODE.load(std::sync::atomic::Ordering::Relaxed) {
         return Ok(next.run(req).await);
     }
 
-    let header = req.headers()
+    let header = req
+        .headers()
         .get("Authorization")
         .and_then(|v| v.to_str().ok())
         .ok_or(StatusCode::UNAUTHORIZED)?;
 
-    let (key_id, secret) =
-        split_bearer(header).ok_or(StatusCode::UNAUTHORIZED)?;
+    let (key_id, secret) = split_bearer(header).ok_or(StatusCode::UNAUTHORIZED)?;
 
     // RATE LIMIT (pre-auth gate)
-    if !check_rate_limit(key_id)
-    {
+    if !check_rate_limit(key_id) {
         return Err(StatusCode::TOO_MANY_REQUESTS);
     }
 
-    let stored = store.find_by_id(key_id)
+    let stored = store
+        .find_by_id(key_id)
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?
         .ok_or(StatusCode::UNAUTHORIZED)?;
 
     let ok = verify_key(secret, &stored);
 
-    if !ok
-    {
+    if !ok {
         write_audit(AuditEvent {
             key_id: key_id.to_string(),
             action: "auth_failed".into(),
@@ -83,8 +78,7 @@ where
         return Err(StatusCode::UNAUTHORIZED);
     }
 
-    let ctx = AuthContext
-    {
+    let ctx = AuthContext {
         key_id: stored.id.clone(),
         role: stored.role.clone(),
         issued_at: stored.created_at,

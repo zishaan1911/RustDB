@@ -1,10 +1,10 @@
 pub mod api_key;
-pub mod hashing;
-pub mod verification;
-pub mod middleware;
-pub mod error;
 pub mod audit;
-pub mod rate_limit;
-pub mod rotation;
-pub mod rbac;
+pub mod error;
+pub mod hashing;
 pub mod macros;
+pub mod middleware;
+pub mod rate_limit;
+pub mod rbac;
+pub mod rotation;
+pub mod verification;
