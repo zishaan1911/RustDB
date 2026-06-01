@@ -1,5 +1,4 @@
-use crate::error::RustDbError;
-use crate::storage::page::page::Page;
+use crate::storage::page::page::{Page, PageError};
 use crate::storage::page::header::HEADER_SIZE;
 
 // Total size of a single slot entry in bytes (2B offset + 2B length)
@@ -24,8 +23,8 @@ impl PageSlots {
     }
 
     // Fetches a specific slot entry from the page by its ID.
-    // Returns `RustDbError::Storage` if reading the slot breaches page boundaries.
-    pub fn get_slot(page: &Page, slot_id: u16) -> Result<Slot, RustDbError> {
+    // Returns `PageError::Storage` if reading the slot breaches page boundaries.
+    pub fn get_slot(page: &Page, slot_id: u16) -> Result<Slot, PageError> {
         let byte_offset = Self::slot_offset(slot_id);
         let bytes = page.read_slice(byte_offset, SLOT_SIZE)?;
         
@@ -36,8 +35,8 @@ impl PageSlots {
     }
 
     // Writes or updates a specific slot entry in the page.
-    // Returns `RustDbError::Storage` if writing the slot breaches page boundaries.
-    pub fn set_slot(page: &mut Page, slot_id: u16, slot: Slot) -> Result<(), RustDbError> {
+    // Returns `PageError::Storage` if writing the slot breaches page boundaries.
+    pub fn set_slot(page: &mut Page, slot_id: u16, slot: Slot) -> Result<(), PageError> {
         let byte_offset = Self::slot_offset(slot_id);
         
         let mut bytes = [0u8; SLOT_SIZE];
@@ -54,9 +53,9 @@ mod tests {
 
     #[test]
     fn test_slot_offset_calculation() {
-        // Slot 0 should start right after the header (offset 18)
+        // Slot 0 should start right after the header (offset 22)
         assert_eq!(PageSlots::slot_offset(0), HEADER_SIZE);
-        // Slot 1 should start 4 bytes later (offset 22)
+        // Slot 1 should start 4 bytes later (offset 26)
         assert_eq!(PageSlots::slot_offset(1), HEADER_SIZE + SLOT_SIZE);
     }
 

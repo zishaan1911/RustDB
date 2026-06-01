@@ -1,6 +1,6 @@
-use crate::constants::PAGE_SIZE;
-use crate::error::RustDbError;
+use crate::storage::page::layout::PAGE_SIZE;
 use crate::storage::page::page::Page;
+use std::fmt;
 
 // Total size of the fixed header in bytes.
 // Layout structure:
@@ -21,6 +21,21 @@ const FREE_SPACE_POINTER_OFFSET: usize = 10;
 const FLAGS_OFFSET: usize = 12;
 const LSN_OFFSET: usize = 14;
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum HeaderError {
+    Storage(String),
+}
+
+impl fmt::Display for HeaderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            HeaderError::Storage(msg) => write!(f, "Storage error: {}", msg),
+        }
+    }
+}
+
+impl std::error::Error for HeaderError {}
+
 // A view wrapper around a `Page`'s raw byte buffer to read and write metadata.
 // Instead of duplicating data structures, `PageHeader` directly reads from and writes to specific byte offsets in the underlying 8 KiB page array.
 pub struct PageHeader;
@@ -28,7 +43,7 @@ pub struct PageHeader;
 impl PageHeader {
     // Initializes a brand new header on a raw page, setting default values.
     // The free space pointer initially starts at the very end of the page (`PAGE_SIZE`).
-    pub fn initialize(page: &mut Page, page_id: u32) -> Result<(), RustDbError> {
+    pub fn initialize(page: &mut Page, page_id: u32) -> Result<(), HeaderError> {
         Self::set_page_id(page, page_id)?;
         Self::set_checksum(page, 0)?;
         Self::set_lsn(page, 0)?;
@@ -40,67 +55,95 @@ impl PageHeader {
 
     //Getters
 
-    pub fn get_page_id(page: &Page) -> Result<u32, RustDbError> {
+    pub fn get_page_id(page: &Page) -> Result<u32, HeaderError> {
         let bytes = page.read_slice(PAGE_ID_OFFSET, 4)?;
         Ok(u32::from_le_bytes(bytes.try_into().unwrap()))
     }
 
-    pub fn get_checksum(page: &Page) -> Result<u32, RustDbError> {
+    pub fn get_checksum(page: &Page) -> Result<u32, HeaderError> {
         let bytes = page.read_slice(CHECKSUM_OFFSET, 4)?;
         Ok(u32::from_le_bytes(bytes.try_into().unwrap()))
     }
 
-    pub fn get_slot_count(page: &Page) -> Result<u16, RustDbError> {
+    pub fn get_slot_count(page: &Page) -> Result<u16, HeaderError> {
         let bytes = page.read_slice(SLOT_COUNT_OFFSET, 2)?;
         Ok(u16::from_le_bytes(bytes.try_into().unwrap()))
     }
 
-    pub fn get_free_space_pointer(page: &Page) -> Result<u16, RustDbError> {
+    pub fn get_free_space_pointer(page: &Page) -> Result<u16, HeaderError> {
         let bytes = page.read_slice(FREE_SPACE_POINTER_OFFSET, 2)?;
         Ok(u16::from_le_bytes(bytes.try_into().unwrap()))
     }
 
-    pub fn get_flags(page: &Page) -> Result<u16, RustDbError> {
+    pub fn get_flags(page: &Page) -> Result<u16, HeaderError> {
         let bytes = page.read_slice(FLAGS_OFFSET, 2)?;
         Ok(u16::from_le_bytes(bytes.try_into().unwrap()))
     }
 
-    pub fn get_lsn(page: &Page) -> Result<u64, RustDbError> {
+    pub fn get_lsn(page: &Page) -> Result<u64, HeaderError> {
         let bytes = page.read_slice(LSN_OFFSET, 8)?;
         Ok(u64::from_le_bytes(bytes.try_into().unwrap()))
     }
 
     //Setters
 
-    pub fn set_page_id(page: &mut Page, page_id: u32) -> Result<(), RustDbError> {
+    pub fn set_page_id(page: &mut Page, page_id: u32) -> Result<(), HeaderError> {
         page.write_slice(PAGE_ID_OFFSET, &page_id.to_le_bytes())
+            .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 
-    pub fn set_checksum(page: &mut Page, checksum: u32) -> Result<(), RustDbError> {
+    pub fn set_checksum(page: &mut Page, checksum: u32) -> Result<(), HeaderError> {
         page.write_slice(CHECKSUM_OFFSET, &checksum.to_le_bytes())
+            .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 
-    pub fn set_slot_count(page: &mut Page, count: u16) -> Result<(), RustDbError> {
+    pub fn set_slot_count(page: &mut Page, count: u16) -> Result<(), HeaderError> {
         page.write_slice(SLOT_COUNT_OFFSET, &count.to_le_bytes())
+            .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 
-    pub fn set_free_space_pointer(page: &mut Page, offset: u16) -> Result<(), RustDbError> {
+    pub fn set_free_space_pointer(page: &mut Page, offset: u16) -> Result<(), HeaderError> {
         if (offset as usize) > PAGE_SIZE {
-            return Err(RustDbError::Storage(format!(
-                "Invalid free space pointer location: {}", offset
+            return Err(HeaderError::Storage(format!(
+                "Invalid free space pointer location: {}",
+                offset
             )));
         }
         page.write_slice(FREE_SPACE_POINTER_OFFSET, &offset.to_le_bytes())
+            .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 
-    pub fn set_flags(page: &mut Page, flags: u16) -> Result<(), RustDbError> {
+    pub fn set_flags(page: &mut Page, flags: u16) -> Result<(), HeaderError> {
         page.write_slice(FLAGS_OFFSET, &flags.to_le_bytes())
+            .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 
-    pub fn set_lsn(page: &mut Page, lsn: u64) -> Result<(), RustDbError> {
+    pub fn set_lsn(page: &mut Page, lsn: u64) -> Result<(), HeaderError> {
         page.write_slice(LSN_OFFSET, &lsn.to_le_bytes())
+            .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 }
+
+impl From<PageError> for HeaderError {
+    fn from(err: PageError) -> Self {
+        HeaderError::Storage(format!("{}", err))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum PageError {
+    Storage(String),
+}
+
+impl fmt::Display for PageError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PageError::Storage(msg) => write!(f, "Storage error: {}", msg),
+        }
+    }
+}
+
+impl std::error::Error for PageError {}
 
 #[cfg(test)]
 mod tests {

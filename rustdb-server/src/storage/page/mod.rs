@@ -8,11 +8,10 @@ pub mod slot;
 // Code outside this module can write `use crate::storage::page::Page` instead of `use crate::storage::page::page::Page`.
 
 pub use checksum::{ChecksumError, compute as compute_checksum, verify as verify_checksum, write as write_checksum};
-pub use header::{PageHeader, PAGE_HEADER_SIZE};
+pub use header::{PageHeader, HEADER_SIZE};
 pub use layout::{
     LayoutError,
     PAGE_SIZE,
-    HEADER_SIZE,
     SLOT_SIZE,
     TOMBSTONE_LENGTH,
     allocate_tuple,
@@ -30,5 +29,5 @@ pub use layout::{
     write_slot,
     write_slot_count,
 };
-pub use page::Page;
-pub use slot::Slot;
+pub use page::{Page, PageError};
+pub use slot::{Slot, PageSlots};

@@ -1,8 +1,22 @@
-use crate::constants::PAGE_SIZE;
-use crate::error::RustDbError;
+use crate::storage::page::layout::PAGE_SIZE;
 use std::fmt;
 
 pub type PageBytes = [u8; PAGE_SIZE];
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum PageError {
+    Storage(String),
+}
+
+impl fmt::Display for PageError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PageError::Storage(msg) => write!(f, "Storage error: {}", msg),
+        }
+    }
+}
+
+impl std::error::Error for PageError {}
 
 // Represents an in-memory 8 KiB page frame managed by the buffer pool.
 
@@ -44,11 +58,11 @@ impl Page {
     }
 
     // Safely copies a slice of bytes into a specific offset range within the page.
-    /// Returns `RustDbError::Storage` if the destination window exceeds the 8 KiB page boundaries.
-    pub fn write_slice(&mut self, offset: usize, bytes: &[u8]) -> Result<(), RustDbError> {
+    /// Returns `PageError::Storage` if the destination window exceeds the 8 KiB page boundaries.
+    pub fn write_slice(&mut self, offset: usize, bytes: &[u8]) -> Result<(), PageError> {
         let end = offset + bytes.len();
         if end > PAGE_SIZE {
-            return Err(RustDbError::Storage(format!(
+            return Err(PageError::Storage(format!(
                 "Out-of-bounds page write: target end index {} exceeds PAGE_SIZE ({})",
                 end, PAGE_SIZE
             )));
@@ -58,11 +72,11 @@ impl Page {
     }
 
     // Safely extracts a view of a slice of bytes from a specific window inside the page.
-    // Returns `RustDbError::Storage` if the requested window exceeds the 8 KiB page boundaries.
-    pub fn read_slice(&self, offset: usize, length: usize) -> Result<&[u8], RustDbError> {
+    // Returns `PageError::Storage` if the requested window exceeds the 8 KiB page boundaries.
+    pub fn read_slice(&self, offset: usize, length: usize) -> Result<&[u8], PageError> {
         let end = offset + length;
         if end > PAGE_SIZE {
-            return Err(RustDbError::Storage(format!(
+            return Err(PageError::Storage(format!(
                 "Out-of-bounds page read: target end index {} exceeds PAGE_SIZE ({})",
                 end, PAGE_SIZE
             )));
