@@ -1,5 +1,5 @@
 use crate::storage::page::layout::PAGE_SIZE;
-use crate::storage::page::page::Page;
+use crate::storage::page::page::{Page, PageError};
 use std::fmt;
 
 // Total size of the fixed header in bytes.
@@ -35,6 +35,12 @@ impl fmt::Display for HeaderError {
 }
 
 impl std::error::Error for HeaderError {}
+
+impl From<PageError> for HeaderError {
+    fn from(err: PageError) -> Self {
+        HeaderError::Storage(format!("{}", err))
+    }
+}
 
 // A view wrapper around a `Page`'s raw byte buffer to read and write metadata.
 // Instead of duplicating data structures, `PageHeader` directly reads from and writes to specific byte offsets in the underlying 8 KiB page array.
@@ -123,27 +129,6 @@ impl PageHeader {
             .map_err(|e| HeaderError::Storage(format!("{}", e)))
     }
 }
-
-impl From<PageError> for HeaderError {
-    fn from(err: PageError) -> Self {
-        HeaderError::Storage(format!("{}", err))
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum PageError {
-    Storage(String),
-}
-
-impl fmt::Display for PageError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            PageError::Storage(msg) => write!(f, "Storage error: {}", msg),
-        }
-    }
-}
-
-impl std::error::Error for PageError {}
 
 #[cfg(test)]
 mod tests {
