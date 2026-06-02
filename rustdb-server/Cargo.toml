@@ -16,6 +16,12 @@ rand_core = "0.6"
 lazy_static = "1.4"
 tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }
 tower = "0.4"
+# C++ bridge runtime dependency
+cxx = "1.0"
+
+[build-dependencies]
+# Build-time helper used by build.rs to run cxx codegen and compile C++ sources
+cxx-build = "1.0"
 
 [dev-dependencies]
 serial_test = "2.0"
