@@ -25,6 +25,18 @@ fn main() {
         // "disk_manager",
     ];
 
+    // Filter BRIDGE_MODULES to only include files that actually contain
+    // a #[cxx::bridge] annotation. This avoids cxxbridge errors when a
+    // wrapper file exists but the bridge block hasn't been added yet.
+    let bridge_files: Vec<String> = BRIDGE_MODULES
+        .iter()
+        .map(|m| format!("rust-bridge/src/{m}.rs"))
+        .filter(|path| match std::fs::read_to_string(path) {
+            Ok(s) => s.contains("#[cxx::bridge]"),
+            Err(_) => false,
+        })
+        .collect();
+
     // -----------------------------------------------------------------------
     // 2. Collect all .cpp source files from cpp/src/ automatically.
     //    You never need to list them individually.
@@ -41,11 +53,7 @@ fn main() {
     // -----------------------------------------------------------------------
     // 3. Run cxx codegen for every bridge module and build the C++ static lib.
     // -----------------------------------------------------------------------
-    let mut build = cxx_build::bridges(
-        BRIDGE_MODULES
-            .iter()
-            .map(|m| format!("rust-bridge/src/{m}.rs")),
-    );
+    let mut build = cxx_build::bridges(bridge_files.iter().map(|s| s.to_string()));
 
     // Compiler settings
     build
