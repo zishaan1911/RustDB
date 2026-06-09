@@ -1,6 +1,5 @@
 [workspace]
 resolver = "2"
-crc32fast = "1"
 members = [
     "rustdb-server"
 ]

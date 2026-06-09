@@ -18,6 +18,7 @@ tokio = { version = "1.33", features = ["macros", "rt-multi-thread"] }
 tower = "0.4"
 # C++ bridge runtime dependency
 cxx = "1.0"
+crc32fast = "1"
 
 [build-dependencies]
 # Build-time helper used by build.rs to run cxx codegen and compile C++ sources
