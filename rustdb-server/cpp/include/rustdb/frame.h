@@ -11,7 +11,7 @@ class Frame {
 public:
     Frame();
 
-    // ── Accessors exposed to Rust via the cxx bridge ─────────────────────
+    // Accessors exposed to Rust via the cxx bridge
 
     uint32_t frame_page_id()  const { return page_id_; }
     bool     frame_is_dirty() const { return dirty_;    }
