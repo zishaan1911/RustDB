@@ -17,4 +17,4 @@ uint32_t frame_page_id(const Frame& f)   { return f.frame_page_id();   }
 bool     frame_is_dirty(const Frame& f)  { return f.frame_is_dirty();  }
 uint32_t frame_pin_count(const Frame& f) { return f.frame_pin_count(); }
 
-} // namespace rustdb
+}
