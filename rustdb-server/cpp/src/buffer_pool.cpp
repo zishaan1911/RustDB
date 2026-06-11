@@ -35,7 +35,6 @@ BufferPool::~BufferPool() = default;
 
 // ---------------------------------------------------------------------------
 // fetch_page
-//
 // TODO: implement LRU-K eviction when all frames are pinned.
 //       For now this is a minimal stub: if page already in pool, pin and
 //       return it; otherwise load into a free frame.
