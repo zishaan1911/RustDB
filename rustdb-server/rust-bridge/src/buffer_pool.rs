@@ -33,8 +33,7 @@ impl BufferPoolHandle {
                 "buffer pool: fetch_page({page_id}) failed — pool exhausted or I/O error"
             )));
         }
-        // SAFETY: data_ptr is valid for the lifetime of this guard because
-        // the page is pinned (pin_count > 0) and cannot be evicted.
+        // SAFETY: data_ptr is valid for the lifetime of this guard because the page is pinned (pin_count > 0) and cannot be evicted.
         let data = unsafe {
             std::slice::from_raw_parts_mut(result.data_ptr as *mut u8, crate::constants::PAGE_SIZE)
         };
