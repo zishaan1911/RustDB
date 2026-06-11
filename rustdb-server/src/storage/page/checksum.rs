@@ -212,7 +212,7 @@ mod tests {
 
     #[test]
     fn verify_fails_on_zero_checksum_for_non_blank_page() {
-        let mut page = page_with_id(55);
+        let page = page_with_id(55);
         let result = verify(&page);
         assert!(result.is_err());
     }
