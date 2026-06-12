@@ -3,7 +3,6 @@
 
 namespace rustdb {
 
-
 Frame::Frame() : storage_(std::make_unique<PageData>()) {}
 
 Frame::Frame(Frame&& o) noexcept
