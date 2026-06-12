@@ -11,6 +11,7 @@
 #include "rustdb/buffer_pool.h"
 #include "rustdb/frame.h"
 
+#include <mutex>
 #include <vector>
 #include <stack>
 #include <queue>
